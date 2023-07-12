@@ -132,7 +132,7 @@ if (defined $exec_path) {
     }
 
     for my $path (sort keys %DSOs) {
-        push @stap_opts, '-d', $path;
+        push @stap_opts, '-d',  "/proc/$pid/root" . $path;
     }
 
     close $in;
@@ -154,7 +154,7 @@ if (defined $pid) {
     $StdVars{target} = $pid;
 
     if (!defined $exec_path) {
-        $exec_path = readlink $exec_file;
+	$exec_path =  "/proc/$pid/root" . readlink $exec_file;
         $StdVars{exec_path} = $exec_path;
         push @stap_opts, "-d", $exec_path;
     }
@@ -311,7 +311,7 @@ sub eval_std_var {
 
     } elsif ($var =~ /^(lib\w+)_path$/) {
         my $prefix = $1;
-        my $libpath = find_dso_path($prefix);
+        my $libpath =  "/proc/$pid/root" . find_dso_path($prefix);
         if (!$libpath) {
             warn "$file: line $.: $prefix is not found, assuming it is statically linked.\n";
             if (!defined $StdVars{exec_path}) {
@@ -511,7 +511,7 @@ sub process_dso {
     }
 
     for my $path (sort keys %DSOs) {
-        push @stap_opts, "-d", $path;
+        push @stap_opts, "-d", "/proc/$pid/root" . $path;
     }
 }
 

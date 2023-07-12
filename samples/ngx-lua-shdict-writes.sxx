@@ -17,14 +17,8 @@
 global zone_names
 
 
-function handler(L, flags)
+function handler(zone, flags, key, key_len)
 {
-    zone = luajit_touserdata(L, 1)
-    if (zone == 0) {
-        warn("failed to get user data")
-        return 0
-    }
-
     dict = zone_names[zone]
     if (dict == "") {
         //printf("generating name...\n")
@@ -56,13 +50,13 @@ function handler(L, flags)
     }
 
     printf("[%d] %s key=%s value_len=%d dict=%s\n", gettimeofday_s(),
-           op, luajit_tostring(L, 2), luajit_tostringlen(L, 3), dict)
+           op, user_string_n(key, key_len), key_len, dict)
 }
 
 
-probe process("$^exec_path").function("ngx_http_lua_shdict_set_helper")
+probe process("$^exec_path").function("ngx_http_lua_ffi_shdict_store")
 {
-    handler($L, $flags)
+    handler($zone, $op, $key, $key_len)
 }
 
 
