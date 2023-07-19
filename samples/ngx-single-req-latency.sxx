@@ -170,7 +170,7 @@ probe @pfunc(ngx_http_core_access_phase)
     }
 }
 
-probe @pfunc(ngx_http_core_try_files_phase)
+probe @pfunc(ngx_http_core_rewrite_phase)
 {
     if (pid() == matched_pid && $r == matched_r) {
         now = gettimeofday_us()

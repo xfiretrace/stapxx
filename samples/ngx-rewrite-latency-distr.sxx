@@ -47,7 +47,7 @@ probe @pfunc(ngx_http_core_access_phase)
     @eval_rewrite_phase_time
 }
 
-probe @pfunc(ngx_http_core_try_files_phase)
+probe @pfunc(ngx_http_core_rewrite_phase)
 {
     now = gettimeofday_us()
     r = $r
